@@ -18,31 +18,7 @@ io = require('socket.io').listen(app)
 linda = require('../').listen(io: io, server: app)
 
 io.sockets.on 'connection', (socket) ->
-  socket.emit 'chat', {msg: 'hello new client!'}
-
-  socket.once 'join_to_room', (room) ->
-    console.log "<#{socket.id}> join_room to \"#{room}\""
-    socket.join room
-
-    ## echo to room
-    socket.on 'chat', (data) ->
-      console.log "<#{socket.id}> #{data.msg}"
-      io.sockets.to(room).emit 'chat', data
-
-    socket.once 'disconnect', ->
-      socket.leave room
-      notify_rooms()
-
-    notify_rooms()
-
-
-notify_rooms = ->
-  rooms = {}
-  for name, ids of io.sockets.manager.rooms
-    if name.match /^\/.+$/
-      name = name.replace /^\//, ''
-      rooms[name] = ids.length
-  io.sockets.emit 'rooms', rooms
+  socket.once 'disconnect', ->
 
 port = process.argv[2]-0 || 3000
 app.listen port
