@@ -1,10 +1,11 @@
 {
   "name": "linda-socket.io",
   "version": "0.0.0",
+  "private": true,
   "description": "Linda implementation on Socket.IO",
   "main": "lib/linda-socketio.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test"
   },
   "keywords": [
     "linda",
@@ -12,8 +13,18 @@
   ],
   "author": "Sho Hashimoto <hashimoto@shokai.org>",
   "license": "MIT",
+  "devDependencies": {
+    "coffee-errors": "*",
+    "coffee-script": "*",
+    "mocha": "*",
+    "grunt": "*",
+    "grunt-simple-mocha": "*",
+    "grunt-notify": "*",
+    "grunt-contrib-coffee": "*",
+    "grunt-coffeelint": "git+https://github.com/geta6/grunt-coffeelint",
+    "grunt-contrib-watch": "git+https://github.com/gruntjs/grunt-contrib-watch"
+  },
   "dependencies": {
-    "coffee-script": "~1.6.3",
-    "socket.io": "~0.9.16"
+    "socket.io": "*"
   }
 }
