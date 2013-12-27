@@ -4,7 +4,8 @@ module.exports = class Tuple
   data: ->
     return @data
 
-  match: (data)->
+  match: (tuple)->
+    return false if tuple instanceof Array or typeof tuple != "object"
     for k,v of @data
-      return false if v != data[k]
+      return false if v != tuple[k]
     return true
