@@ -2,12 +2,14 @@ process.env.NODE_ENV = 'test'
 
 path = require 'path'
 assert = require 'assert'
-TupleSpace = require(path.resolve()).TupleSpace
+Linda = require(path.resolve())
+TupleSpace = Linda.TupleSpace
+Tuple = Linda.Tuple
 
 createNewTupleSpace = ->
   return new TupleSpace("testspace_#{new Date()-1}")
 
-describe 'TupleSpace', ->
+describe 'instance of "TupleSpace"', ->
 
   ts = createNewTupleSpace()
 
@@ -24,7 +26,7 @@ describe 'TupleSpace', ->
 
   describe '"write" method', ->
 
-    it 'should store Tuples', ->
+    it 'should store HashTuples', ->
       ts = createNewTupleSpace()
       assert.equal ts.size, 0
       ts.write {a:1, b:2}
@@ -32,4 +34,8 @@ describe 'TupleSpace', ->
 
     it 'should not store if not valid Tuple', ->
       ts = createNewTupleSpace()
+      assert.equal ts.size, 0
+      ts.write "foobar"
+      ts.write [1,2]
+      ts.write null
       assert.equal ts.size, 0
