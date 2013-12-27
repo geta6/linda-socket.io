@@ -3,6 +3,9 @@ url  = require 'url'
 fs = require 'fs'
 socketio = require 'socket.io'
 
+module.exports.TupleSpace = require __dirname+'/tuplespace'
+module.exports.Tuple = require __dirname+'/tuple'
+
 class Linda
   constructor: ->
     fs.readFile __dirname+"/linda-socketio-client.js", (err, data) =>
@@ -43,4 +46,4 @@ class TupleSpace
     console.log tuple
     
 
-module.exports = new Linda
+module.exports.Linda = new Linda
