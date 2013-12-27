@@ -1,6 +1,6 @@
 Linda Socket.IO
 ===============
-[Coordinatioin Launguage "Linda"](http://en.wikipedia.org/wiki/Linda_(coordination_language)) implementation for Node.js and Socket.IO
+<a href="http://en.wikipedia.org/wiki/Linda_(coordination_language)">Coordinatioin Launguage "Linda"</a> implementation for Node.js and Socket.IO
 
 - https://github.com/shokai/linda-socket.io
 
