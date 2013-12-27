@@ -31,6 +31,7 @@ module.exports = (grunt) ->
         files: [
           { expand: yes, cwd: 'src/', src: [ '**/*.coffee' ] }
           { expand: yes, cwd: 'tests/', src: [ '**/*.coffee' ] }
+          { expand: yes, cwd: 'sample/coffee/', src: [ '**/*.coffee' ] }
         ]
 
     coffee:
@@ -40,6 +41,13 @@ module.exports = (grunt) ->
           cwd: 'src/'
           src: [ '**/*.coffee' ]
           dest: 'lib/'
+          ext: '.js'
+        }
+        {
+          expand: yes
+          cwd: 'sample/coffee/'
+          src: [ '**/*.coffee' ]
+          dest: 'sample/js/'
           ext: '.js'
         }]
 
@@ -56,5 +64,5 @@ module.exports = (grunt) ->
       options:
         interrupt: yes
       dist:
-        files: [ 'src/**/*.coffee', 'tests/**/*.coffee' ]
+        files: [ 'src/**/*.coffee', 'tests/**/*.coffee', 'sample/**/*.coffee' ]
         tasks: [ 'test' ]

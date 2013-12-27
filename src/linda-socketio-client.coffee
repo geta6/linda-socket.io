@@ -2,7 +2,7 @@ class Linda
   connect: (@io) ->
 
   tuplespace: (name) ->
-    return new TupleSpace @io, name
+    new TupleSpace @io, name
 
 class TupleSpace
   constructor: (@io, @name) ->
