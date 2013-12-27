@@ -1,8 +1,13 @@
 module.exports = class Tuple
+
+  @isHash: (data)->
+    return false if !data or data instanceof Array or typeof data != "object"
+    return true
+
   constructor: (@data)->
 
   match: (tuple)->
-    return false if tuple instanceof Array or typeof tuple != "object"
+    return false unless Tuple.isHash(tuple)
     data = if tuple instanceof Tuple then tuple.data else tuple
     for k,v of @data
       return false if v != data[k]

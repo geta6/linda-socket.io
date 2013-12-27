@@ -4,7 +4,27 @@ path = require 'path'
 assert = require 'assert'
 Tuple = require(path.resolve()).Tuple
 
-describe 'Tuple {"a": 1, "b": 2}', ->
+describe 'class "Tuple"', ->
+
+  it 'should have class-method "isHash"', ->
+    assert.equal typeof Tuple.isHash, 'function'
+
+  describe 'class-method "isHash"', ->
+
+    it 'should return true if Hash', ->
+      assert.equal Tuple.isHash({a:1, b:2}), true
+
+    it 'should return false if String', ->
+      assert.equal Tuple.isHash("foo"), false
+
+    it 'should return false if Array', ->
+      assert.equal Tuple.isHash([1,2,3]), false
+
+    it 'should return false if null', ->
+      assert.equal Tuple.isHash(null), false
+
+
+describe 'new Tuple({a:1, b:2})', ->
 
   tuple = new Tuple(a:1, b:2)
 
@@ -34,3 +54,4 @@ describe 'Tuple {"a": 1, "b": 2}', ->
 
   it 'should not match new Tuple({a:1, b:"foo"})', ->
     assert.equal tuple.match(new Tuple({a:1, b:"foo"})), false
+
