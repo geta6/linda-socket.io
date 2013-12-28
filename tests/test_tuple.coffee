@@ -29,7 +29,7 @@ describe 'new Tuple({a:1, b:2})', ->
   tuple = new Tuple(a:1, b:2)
 
   it 'should have "data" property', ->
-    assert.equal tuple.hasOwnProperty('data'), true
+    assert.ok tuple.hasOwnProperty('data')
 
   it 'should match {a: 1, b: 2}', ->
     assert.equal tuple.match({a:1, b:2}), true

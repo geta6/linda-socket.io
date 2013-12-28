@@ -13,7 +13,7 @@ describe 'instance of "TupleSpace"', ->
     assert.equal new TupleSpace("foo").name, 'foo'
 
   it 'should have "size" property', ->
-    assert.equal new TupleSpace().hasOwnProperty('size'), true
+    assert.ok new TupleSpace().hasOwnProperty('size')
 
   describe '"size" property', ->
 
@@ -101,3 +101,4 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.take({}).toString(), {a:1, b:2, c:45}.toString()
       assert.equal ts.size, 0
       assert.equal ts.take({}), null
+
