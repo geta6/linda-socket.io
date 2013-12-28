@@ -2,6 +2,11 @@ process.env.NODE_ENV = 'test'
 
 path = require 'path'
 assert = require 'assert'
+assert.object_equal = (a,b)->
+  @equal JSON.stringify(a), JSON.stringify(b)
+
+async = require 'async'
+
 Linda = require(path.resolve())
 TupleSpace = Linda.TupleSpace
 Tuple = Linda.Tuple
@@ -52,12 +57,10 @@ describe 'instance of "TupleSpace"', ->
     ts.write {a:1, b:2, c:45}
 
     it 'should return matched Tuple', ->
-      assert.equal ts.read(a:1, b:2).toString(), {a:1, b:2, c:45}.toString()
-      assert.equal ts.read(a:1, b:2, c:3).toString(),
-                   {a:1, b:2, c:3}.toString()
-      assert.equal ts.read(new Tuple(d:88)).toString(),
-                   {a:1, b:2, d:88}.toString()
-      assert.equal ts.read({}).toString(), {a:1, b:2, c:45}.toString()
+      assert.object_equal ts.read(a:1, b:2).data, {a:1, b:2, c:45}
+      assert.object_equal ts.read(a:1, b:2, c:3).data, {a:1, b:2, c:3}
+      assert.object_equal ts.read(new Tuple(d:88)).data, {a:1, b:2, d:88}
+      assert.object_equal ts.read({}).data, {a:1, b:2, c:45}
 
     it 'should return null if not matched', ->
       assert.equal ts.read({foo: 'bar'}), null
@@ -91,14 +94,11 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.take({foo: 'bar'}), null
 
     it 'should return matched Tuple and delete', ->
-      assert.equal ts.take({a:1, b:2, c:3}).toString(),
-                   {a:1, b:2, c:3}.toString()
+      assert.object_equal ts.take({a:1, b:2, c:3}).data, {a:1, b:2, c:3}
       assert.equal ts.size, 2
       assert.equal ts.take({a:1, b:2, c:3}), null
-      assert.equal ts.take(new Tuple({d:88})).toString(),
-                   {a:1, b:2, d:88}.toString()
+      assert.object_equal ts.take(new Tuple({d:88})).data, {a:1, b:2, d:88}
       assert.equal ts.size, 1
-      assert.equal ts.take({}).toString(), {a:1, b:2, c:45}.toString()
+      assert.object_equal ts.take({}).data, {a:1, b:2, c:45}
       assert.equal ts.size, 0
       assert.equal ts.take({}), null
-
