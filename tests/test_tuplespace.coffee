@@ -82,7 +82,15 @@ describe 'instance of "TupleSpace"', ->
     ts.write {a:1, b:2, d:88}
     ts.write {a:1, b:2, c:45}
 
-    it 'should return matched Tuple', ->
+    it 'should return null if not valid Tuple', ->
+      assert.equal ts.take("bar"), null
+      assert.equal ts.take([1,2,3]), null
+      assert.equal ts.take(null), null
+
+    it 'should return null if not matched', ->
+      assert.equal ts.take({foo: 'bar'}), null
+
+    it 'should return matched Tuple and delete', ->
       assert.equal ts.take({a:1, b:2, c:3}).toString(),
                    {a:1, b:2, c:3}.toString()
       assert.equal ts.size, 2
@@ -93,4 +101,3 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.take({}).toString(), {a:1, b:2, c:45}.toString()
       assert.equal ts.size, 0
       assert.equal ts.take({}), null
-
