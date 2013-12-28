@@ -42,6 +42,9 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.size, 0
 
 
+  it 'should have "read" method', ->
+    assert.equal typeof new TupleSpace()['read'], 'function'
+
   describe '"read" method', ->
     ts = new TupleSpace("foo")
     ts.write {a:1, b:2, c:3}
@@ -68,3 +71,26 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.size, 3
       assert.notEqual ts.read({}), null
       assert.equal ts.size, 3
+
+
+  it 'should have "take" method', ->
+    assert.equal typeof new TupleSpace()['take'], 'function'
+
+  describe '"take" method', ->
+    ts = new TupleSpace
+    ts.write {a:1, b:2, c:3}
+    ts.write {a:1, b:2, d:88}
+    ts.write {a:1, b:2, c:45}
+
+    it 'should return matched Tuple', ->
+      assert.equal ts.take({a:1, b:2, c:3}).toString(),
+                   {a:1, b:2, c:3}.toString()
+      assert.equal ts.size, 2
+      assert.equal ts.take({a:1, b:2, c:3}), null
+      assert.equal ts.take(new Tuple({d:88})).toString(),
+                   {a:1, b:2, d:88}.toString()
+      assert.equal ts.size, 1
+      assert.equal ts.take({}).toString(), {a:1, b:2, c:45}.toString()
+      assert.equal ts.size, 0
+      assert.equal ts.take({}), null
+
