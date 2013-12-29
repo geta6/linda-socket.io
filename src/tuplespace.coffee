@@ -62,6 +62,18 @@ module.exports = class TupleSpace
       return id
     return
 
+  watch: (tuple, callback)->
+    return unless typeof callback == 'function'
+    if !Tuple.isHash(tuple) and !(tuple instance Tuple)
+      setImmediate -> callback('argument_error')
+      return
+    tuple = new Tuple(tuple) unless tuple instanceof Tuple
+    id = new Date-Math.random()
+    @callbacks.unshift {
+      type: 'watch', callback: callback,
+      tuple: tuple, id: id}
+    return id
+
   cancel: (id)->
     for i in [0...@callbacks.length]
       c = @callbacks[i]

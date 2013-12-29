@@ -231,3 +231,48 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.callbacks.length, 1
       ts.write {a:1, b:2}
       assert.equal ts.callbacks.length, 0
+
+  describe '"watch" method', ->
+
+    it 'should return cancel_id', ->
+      ts = new TupleSpace
+      cid = ts.watch {}, ->
+      assert.ok cid > 0
+
+    it 'should return Tuple when write(tuple)', (done)->
+      ts = new TupleSpace
+
+      results = []
+      ts.watch {a:1, b:2}, (err, tuple)->
+        results.push tuple.data
+        if results.length == 2
+          assert.deepEqual results,
+                              [{a:1, b:2, c:3}, {a:1, b:2, name: "shokai"}]
+          done()
+
+      ts.write {a:1, b:2, c:3}
+      ts.write {foo: "bar"}
+      ts.write {a:1}
+      ts.write {a:1, b:2, name: "shokai"}
+
+    it 'should not return Tuple if canceled', (done)->
+      ts = new TupleSpace
+      cid = null
+      async.parallel [
+        (async_done)->
+          cid_ = ts.watch {a:1}, (err, tuple)->
+            assert.deepEqual tuple.data, {a:1, b:2}
+            async_done(null, cid_)
+        (async_done)->
+          cid = ts.watch {}, (err, tuple)->
+            assert.equal err, "cancel"
+            async_done(null, cid)
+      ], (err, callback_ids)->
+        assert.notEqual callback_ids[0], callback_ids[1]
+        done()
+
+      assert.equal ts.callbacks.length, 2
+      ts.cancel cid
+      assert.equal ts.callbacks.length, 1
+      ts.write {a:1, b:2}
+
