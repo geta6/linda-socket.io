@@ -102,3 +102,59 @@ describe 'instance of "TupleSpace"', ->
       assert.object_equal ts.take({}).data, {a:1, b:2, c:45}
       assert.equal ts.size, 0
       assert.equal ts.take({}), null
+
+  describe '"read" method with callback', ->
+
+    it 'should return matched Tuple', (done)->
+      ts = new TupleSpace
+      ts.write {a:1, b:2, c:3}
+      ts.read {a:1, c:3}, (err, tuple)->
+        assert.object_equal tuple.data, {a:1, b:2, c:3}
+        done()
+
+    it 'should wait if Tuple not found', (done)->
+      ts = new TupleSpace
+      async.parallel [
+        (async_callback)->
+          ts.read {a:1, d:4}, (err, tuple)->
+            assert.object_equal tuple.data, {a:1, b:2, c:3, d:4}
+            async_callback(null, tuple)
+        (async_callback)->
+          ts.read {sensor: "light"}, (err, tuple)->
+            assert.object_equal tuple.data, {sensor: "light", value: 80}
+            async_callback(null, tuple)
+        (async_callback)->
+          ts.read {}, (err, tuple)->
+            assert.object_equal tuple.data, {a:1, b:2, c:3}
+            async_callback(null, tuple)
+      ], (err, results)->
+        done()
+
+      assert.equal ts.callbacks.length, 3
+      ts.write {a:1, b:2, c:3}
+      ts.write {a:1, b:2, c:3, d:4}
+      ts.write {sensor: "light", value: 80}
+      assert.equal ts.callbacks.length, 0
+
+    it 'should not return Tuple if canceled', (done)->
+      ts = new TupleSpace
+      cid = null
+      async.parallel [
+        (async_callback)->
+          cid_ = ts.read {a:1}, (err, tuple)->
+            assert.object_equal tuple.data, {a:1, b:2}
+            async_callback(null, cid_)
+        (async_callback)->
+          cid = ts.read {}, (err, tuple)->
+            assert.equal err, "cancel"
+            async_callback(null, cid)
+      ], (err, callback_ids)->
+        assert.notEqual callback_ids[0], callback_ids[1]
+        done()
+
+      assert.equal ts.callbacks.length, 2
+      ts.cancel cid
+      assert.equal ts.callbacks.length, 1
+      ts.write {a:1, b:2}
+      assert.equal ts.callbacks.length, 0
+

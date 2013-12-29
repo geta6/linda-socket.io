@@ -1,24 +1,42 @@
-
 Tuple = require __dirname+'/tuple'
 
 module.exports = class TupleSpace
   constructor: (@name="noname")->
     @tuples = []
+    @callbacks = []
     @__defineGetter__ 'size', ->
       return @tuples.length
 
   write: (tuple)->
     return if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
+    called = []
+    for i in [0...@callbacks.length]
+      c = @callbacks[i]
+      if c.tuple.match tuple
+        called.push i
+        c.callback(null, tuple)
+        break if c.type == 'take'
+    for i in [0...called.length]
+      @callbacks.splice called[i]-i, 1
     @tuples.push tuple
 
-  read: (tuple)->
-    return null if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
+  read: (tuple, callback)->
+    callback = null unless typeof callback == 'function'
+    if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
+      callback(null) if callback
+      return null
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
     for i in [@size-1..0]
       j = @tuples[i]
-      return j if tuple.match j
-    return null
+      if tuple.match j
+        callback(null, j) if callback
+        return j
+    if callback
+      id = new Date-Math.random()
+      @callbacks.push({type: 'read', callback: callback, tuple: tuple, id: id})
+      return id
+    return
 
   take: (tuple)->
     return null if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
@@ -30,3 +48,10 @@ module.exports = class TupleSpace
         return j
     return null
 
+  cancel: (id)->
+    for i in [0...@callbacks.length]
+      c = @callbacks[i]
+      if id == c.id
+        c.callback("cancel", null)
+        @callbacks.splice i, 1
+        #return
