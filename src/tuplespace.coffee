@@ -14,7 +14,7 @@ module.exports = class TupleSpace
     for i in [0...@callbacks.length]
       c = @callbacks[i]
       if c.tuple.match tuple
-        called.push i
+        called.push i if c.type == 'take' or c.type == 'read'
         ((c)->
           setImmediate -> c.callback(null, tuple)
         ).call(this, c)
