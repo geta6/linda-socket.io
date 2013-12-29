@@ -55,3 +55,30 @@ describe 'new Tuple({a:1, b:2})', ->
   it 'should not match new Tuple({a:1, b:"foo"})', ->
     assert.equal tuple.match(new Tuple({a:1, b:"foo"})), false
 
+describe 'new Tuple({arr: [1,2,3]})', ->
+
+  tuple = new Tuple(arr: [1,2,3])
+
+  it 'should match {foo: "bar", arr: [1,2,3]}', ->
+    assert.ok tuple.match {foo: "bar", arr: [1,2,3]}
+
+  it 'should not match {foo: "bar", arr: [1,2,4]}', ->
+    assert.equal tuple.match({foo: "bar", arr: [1,2,4]}), false
+
+
+describe 'new Tuple({user: {name: "shokai", url: "http://shokai.org"}})', ->
+
+  tuple = new Tuple({user: {name: "shokai", url: "http://shokai.org"}})
+
+  it 'should match
+   {user: {name: "shokai", url: "http://shokai.org"}, foo: "bar"}', ->
+    assert.ok tuple.match({
+      user: {name: "shokai", url: "http://shokai.org"},
+      foo: "bar"})
+
+  it 'should not match
+   {user: {name: "shokai", url: "https://shokai.github.com"}, foo: "bar"}', ->
+    assert.equal tuple.match({
+      user: {name: "shokai", url: "https://shokai.github.com"},
+      foo: "bar"})
+      , false
