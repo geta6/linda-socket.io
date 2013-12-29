@@ -17,6 +17,9 @@ describe 'class "Tuple"', ->
     it 'should return false if String', ->
       assert.equal Tuple.isHash("foo"), false
 
+    it 'should return false if Number', ->
+      assert.equal Tuple.isHash(401), false
+
     it 'should return false if Array', ->
       assert.equal Tuple.isHash([1,2,3]), false
 
