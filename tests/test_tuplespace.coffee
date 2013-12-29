@@ -17,6 +17,11 @@ describe 'instance of "TupleSpace"', ->
   it 'should have "name" property', ->
     assert.equal new TupleSpace("foo").name, 'foo'
 
+  it 'should have "callbacks" property', ->
+    ts = new TupleSpace()
+    assert.ok ts.hasOwnProperty('callbacks')
+    assert.ok ts.callbacks instanceof Array
+
   it 'should have "size" property', ->
     assert.ok new TupleSpace().hasOwnProperty('size')
 
@@ -27,6 +32,9 @@ describe 'instance of "TupleSpace"', ->
 
   it 'should have "write" method', ->
     assert.equal typeof new TupleSpace()['write'], 'function'
+
+  it 'should have "cancel" method', ->
+    assert.equal typeof new TupleSpace()['cancel'], 'function'
 
 
   describe '"write" method', ->
@@ -105,6 +113,11 @@ describe 'instance of "TupleSpace"', ->
 
   describe '"read" method with callback', ->
 
+    it 'should return cancel_id', ->
+      ts = new TupleSpace
+      cid = ts.read {}, ->
+      assert.ok cid > 0
+
     it 'should return matched Tuple', (done)->
       ts = new TupleSpace
       ts.write {a:1, b:2, c:3}
@@ -115,18 +128,18 @@ describe 'instance of "TupleSpace"', ->
     it 'should wait if Tuple not found', (done)->
       ts = new TupleSpace
       async.parallel [
-        (async_callback)->
+        (async_done)->
           ts.read {a:1, d:4}, (err, tuple)->
             assert.object_equal tuple.data, {a:1, b:2, c:3, d:4}
-            async_callback(null, tuple)
-        (async_callback)->
+            async_done(null, tuple)
+        (async_done)->
           ts.read {sensor: "light"}, (err, tuple)->
             assert.object_equal tuple.data, {sensor: "light", value: 80}
-            async_callback(null, tuple)
-        (async_callback)->
+            async_done(null, tuple)
+        (async_done)->
           ts.read {}, (err, tuple)->
             assert.object_equal tuple.data, {a:1, b:2, c:3}
-            async_callback(null, tuple)
+            async_done(null, tuple)
       ], (err, results)->
         done()
 
@@ -140,14 +153,14 @@ describe 'instance of "TupleSpace"', ->
       ts = new TupleSpace
       cid = null
       async.parallel [
-        (async_callback)->
+        (async_done)->
           cid_ = ts.read {a:1}, (err, tuple)->
             assert.object_equal tuple.data, {a:1, b:2}
-            async_callback(null, cid_)
-        (async_callback)->
+            async_done(null, cid_)
+        (async_done)->
           cid = ts.read {}, (err, tuple)->
             assert.equal err, "cancel"
-            async_callback(null, cid)
+            async_done(null, cid)
       ], (err, callback_ids)->
         assert.notEqual callback_ids[0], callback_ids[1]
         done()
@@ -158,3 +171,63 @@ describe 'instance of "TupleSpace"', ->
       ts.write {a:1, b:2}
       assert.equal ts.callbacks.length, 0
 
+  describe '"take" method with callback', ->
+
+    it 'should return cancel_id', ->
+      ts = new TupleSpace
+      cid = ts.take {}, ->
+      assert.ok cid > 0
+
+    it 'should return matched Tuple and delete', (done)->
+      ts = new TupleSpace
+      ts.write {a:1, b:2, c:3}
+      ts.take {a:1, c:3}, (err, tuple)->
+        assert.object_equal tuple.data, {a:1, b:2, c:3}
+        assert.equal ts.size, 0
+        done()
+
+    it 'should wait if Tuple not found', (done)->
+      ts = new TupleSpace
+      async.parallel [
+        (async_done)->
+          ts.take {a:1, b:2}, (err, tuple)->
+            assert.object_equal tuple.data, {a:1, b:2, c:3}
+            async_done(null, tuple)
+        (async_done)->
+          ts.take {foo: "bar"}, (err, tuple)->
+            assert.object_equal tuple.data, {foo: "bar"}
+            async_done(null, tuple)
+        (async_done)->
+          ts.take {a:1, b:2}, (err, tuple)->
+            assert.object_equal tuple.data, {a:1, b:2, c:300}
+            async_done(null, tuple)
+      ], (err, results)->
+        assert.equal ts.callbacks.length, 0
+        done()
+
+      assert.equal ts.callbacks.length, 3
+      ts.write {a:1, b:2, c:3}
+      ts.write {foo: "bar"}
+      ts.write {a:1, b:2, c:300}
+
+    it 'should not return Tuple if cacneled', (done)->
+      ts = new TupleSpace
+      cid = null
+      async.parallel [
+        (async_done)->
+          cid_ = ts.take {a:1}, (err, tuple)->
+            assert.object_equal tuple.data, {a:1, b:2}
+            async_done(null, cid_)
+        (async_done)->
+          cid = ts.take {}, (err, tuple)->
+            assert.equal err, "cancel"
+            async_done(null, cid)
+      ], (err, callback_ids)->
+        assert.notEqual callback_ids[0], callback_ids[1]
+        done()
+
+      assert.equal ts.callbacks.length, 2
+      ts.cancel cid
+      assert.equal ts.callbacks.length, 1
+      ts.write {a:1, b:2}
+      assert.equal ts.callbacks.length, 0
