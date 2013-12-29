@@ -23,6 +23,9 @@ module.exports = class TupleSpace
       @callbacks.splice called[i]-i, 1
     @tuples.push tuple
 
+  create_callback_id: ->
+    new Date()-Math.random()
+
   read: (tuple, callback)->
     callback = null unless typeof callback == 'function'
     if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
@@ -37,7 +40,7 @@ module.exports = class TupleSpace
           setImmediate -> callback(null, t)
         return t
     if callback
-      id = new Date-Math.random()
+      id = @create_callback_id()
       @callbacks.push {type: 'read', callback: callback, tuple: tuple, id: id}
       return id
     return
@@ -57,7 +60,7 @@ module.exports = class TupleSpace
         @tuples.splice i, 1
         return t
     if callback
-      id = new Date-Math.random()
+      id = @create_callback_id()
       @callbacks.push {type: 'take', callback: callback, tuple: tuple, id: id}
       return id
     return
@@ -68,7 +71,7 @@ module.exports = class TupleSpace
       setImmediate -> callback('argument_error')
       return
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
-    id = new Date-Math.random()
+    id = @create_callback_id()
     @callbacks.unshift {
       type: 'watch', callback: callback,
       tuple: tuple, id: id}

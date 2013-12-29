@@ -19,6 +19,9 @@ describe 'instance of "TupleSpace"', ->
     assert.ok ts.hasOwnProperty('callbacks')
     assert.ok ts.callbacks instanceof Array
 
+  it 'should have "create_callback_id" method', ->
+    assert.equal typeof new TupleSpace()['create_callback_id'], 'function'
+
   it 'should have "size" property', ->
     assert.ok new TupleSpace().hasOwnProperty('size')
 
