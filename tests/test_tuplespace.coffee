@@ -2,9 +2,6 @@ process.env.NODE_ENV = 'test'
 
 path = require 'path'
 assert = require 'assert'
-assert.object_equal = (a,b)->
-  @equal JSON.stringify(a), JSON.stringify(b)
-
 async = require 'async'
 
 Linda = require(path.resolve())
@@ -65,10 +62,10 @@ describe 'instance of "TupleSpace"', ->
     ts.write {a:1, b:2, c:45}
 
     it 'should return matched Tuple', ->
-      assert.object_equal ts.read(a:1, b:2).data, {a:1, b:2, c:45}
-      assert.object_equal ts.read(a:1, b:2, c:3).data, {a:1, b:2, c:3}
-      assert.object_equal ts.read(new Tuple(d:88)).data, {a:1, b:2, d:88}
-      assert.object_equal ts.read({}).data, {a:1, b:2, c:45}
+      assert.deepEqual ts.read(a:1, b:2).data, {a:1, b:2, c:45}
+      assert.deepEqual ts.read(a:1, b:2, c:3).data, {a:1, b:2, c:3}
+      assert.deepEqual ts.read(new Tuple(d:88)).data, {a:1, b:2, d:88}
+      assert.deepEqual ts.read({}).data, {a:1, b:2, c:45}
 
     it 'should return null if not matched', ->
       assert.equal ts.read({foo: 'bar'}), null
@@ -102,12 +99,12 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.take({foo: 'bar'}), null
 
     it 'should return matched Tuple and delete', ->
-      assert.object_equal ts.take({a:1, b:2, c:3}).data, {a:1, b:2, c:3}
+      assert.deepEqual ts.take({a:1, b:2, c:3}).data, {a:1, b:2, c:3}
       assert.equal ts.size, 2
       assert.equal ts.take({a:1, b:2, c:3}), null
-      assert.object_equal ts.take(new Tuple({d:88})).data, {a:1, b:2, d:88}
+      assert.deepEqual ts.take(new Tuple({d:88})).data, {a:1, b:2, d:88}
       assert.equal ts.size, 1
-      assert.object_equal ts.take({}).data, {a:1, b:2, c:45}
+      assert.deepEqual ts.take({}).data, {a:1, b:2, c:45}
       assert.equal ts.size, 0
       assert.equal ts.take({}), null
 
@@ -122,7 +119,7 @@ describe 'instance of "TupleSpace"', ->
       ts = new TupleSpace
       ts.write {a:1, b:2, c:3}
       ts.read {a:1, c:3}, (err, tuple)->
-        assert.object_equal tuple.data, {a:1, b:2, c:3}
+        assert.deepEqual tuple.data, {a:1, b:2, c:3}
         done()
 
     it 'should wait if Tuple not found', (done)->
@@ -130,15 +127,15 @@ describe 'instance of "TupleSpace"', ->
       async.parallel [
         (async_done)->
           ts.read {a:1, d:4}, (err, tuple)->
-            assert.object_equal tuple.data, {a:1, b:2, c:3, d:4}
+            assert.deepEqual tuple.data, {a:1, b:2, c:3, d:4}
             async_done(null, tuple)
         (async_done)->
           ts.read {sensor: "light"}, (err, tuple)->
-            assert.object_equal tuple.data, {sensor: "light", value: 80}
+            assert.deepEqual tuple.data, {sensor: "light", value: 80}
             async_done(null, tuple)
         (async_done)->
           ts.read {}, (err, tuple)->
-            assert.object_equal tuple.data, {a:1, b:2, c:3}
+            assert.deepEqual tuple.data, {a:1, b:2, c:3}
             async_done(null, tuple)
       ], (err, results)->
         done()
@@ -155,7 +152,7 @@ describe 'instance of "TupleSpace"', ->
       async.parallel [
         (async_done)->
           cid_ = ts.read {a:1}, (err, tuple)->
-            assert.object_equal tuple.data, {a:1, b:2}
+            assert.deepEqual tuple.data, {a:1, b:2}
             async_done(null, cid_)
         (async_done)->
           cid = ts.read {}, (err, tuple)->
@@ -182,7 +179,7 @@ describe 'instance of "TupleSpace"', ->
       ts = new TupleSpace
       ts.write {a:1, b:2, c:3}
       ts.take {a:1, c:3}, (err, tuple)->
-        assert.object_equal tuple.data, {a:1, b:2, c:3}
+        assert.deepEqual tuple.data, {a:1, b:2, c:3}
         assert.equal ts.size, 0
         done()
 
@@ -191,15 +188,15 @@ describe 'instance of "TupleSpace"', ->
       async.parallel [
         (async_done)->
           ts.take {a:1, b:2}, (err, tuple)->
-            assert.object_equal tuple.data, {a:1, b:2, c:3}
+            assert.deepEqual tuple.data, {a:1, b:2, c:3}
             async_done(null, tuple)
         (async_done)->
           ts.take {foo: "bar"}, (err, tuple)->
-            assert.object_equal tuple.data, {foo: "bar"}
+            assert.deepEqual tuple.data, {foo: "bar"}
             async_done(null, tuple)
         (async_done)->
           ts.take {a:1, b:2}, (err, tuple)->
-            assert.object_equal tuple.data, {a:1, b:2, c:300}
+            assert.deepEqual tuple.data, {a:1, b:2, c:300}
             async_done(null, tuple)
       ], (err, results)->
         assert.equal ts.callbacks.length, 0
@@ -216,7 +213,7 @@ describe 'instance of "TupleSpace"', ->
       async.parallel [
         (async_done)->
           cid_ = ts.take {a:1}, (err, tuple)->
-            assert.object_equal tuple.data, {a:1, b:2}
+            assert.deepEqual tuple.data, {a:1, b:2}
             async_done(null, cid_)
         (async_done)->
           cid = ts.take {}, (err, tuple)->
