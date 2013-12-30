@@ -6,6 +6,15 @@ Tuple = require(path.resolve()).Tuple
 
 describe 'class "Tuple"', ->
 
+  it 'should have class-property "DEFAULT"', ->
+    assert.equal typeof Tuple.DEFAULT, 'object'
+
+  describe 'class-property "DEFAULT"', ->
+
+    it 'should have "expire" property', ->
+      assert.equal typeof Tuple.DEFAULT.expire, 'number'
+      assert.ok Tuple.DEFAULT.expire > 0
+
   it 'should have class-method "isHash"', ->
     assert.equal typeof Tuple.isHash, 'function'
 
@@ -27,12 +36,16 @@ describe 'class "Tuple"', ->
       assert.equal Tuple.isHash(null), false
 
 
-describe 'new Tuple({a:1, b:2})', ->
+describe 'instance of Tuple {a:1, b:2}', ->
 
   tuple = new Tuple(a:1, b:2)
 
+  it 'should have "expire_at" property', ->
+    assert.ok tuple.hasOwnProperty('expire_at')
+
   it 'should have "data" property', ->
     assert.ok tuple.hasOwnProperty('data')
+    assert.ok tuple.expire_at > new Date()/1000
 
   it 'should match {a: 1, b: 2}', ->
     assert.equal tuple.match({a:1, b:2}), true
@@ -69,7 +82,8 @@ describe 'new Tuple({arr: [1,2,3]})', ->
     assert.equal tuple.match({foo: "bar", arr: [1,2,4]}), false
 
 
-describe 'new Tuple({user: {name: "shokai", url: "http://shokai.org"}})', ->
+describe 'instance of Tuple
+          {user: {name: "shokai", url: "http://shokai.org"}}', ->
 
   tuple = new Tuple({user: {name: "shokai", url: "http://shokai.org"}})
 

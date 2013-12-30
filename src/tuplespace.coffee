@@ -7,9 +7,10 @@ module.exports = class TupleSpace
     @__defineGetter__ 'size', ->
       return @tuples.length
 
-  write: (tuple)->
+  write: (tuple, options={expire: Tuple.DEFAULT.expire})->
     return if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
+    tuple.expire = options.expire
     called = []
     for i in [0...@callbacks.length]
       c = @callbacks[i]
@@ -84,3 +85,12 @@ module.exports = class TupleSpace
         setImmediate -> c.callback('cancel', null)
         @callbacks.splice i, 1
         return
+
+  check_expire: ->
+    expires = []
+    for i in [0...@tuples.length]
+      if @tuples[i].expire_at < new Date()/1000
+        expires.push i
+    for i in expires by -1
+      @tuples.splice i, 1
+    return expires.length

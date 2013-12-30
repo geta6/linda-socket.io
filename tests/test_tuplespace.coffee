@@ -36,6 +36,9 @@ describe 'instance of "TupleSpace"', ->
   it 'should have "cancel" method', ->
     assert.equal typeof new TupleSpace()['cancel'], 'function'
 
+  it 'should have "check_expire" method', ->
+    assert.equal typeof new TupleSpace()['check_expire'], 'function'
+
 
   describe '"write" method', ->
 
@@ -276,3 +279,27 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.callbacks.length, 1
       ts.write {a:1, b:2}
 
+  describe '"check_expire" method', ->
+
+    it 'should delete expired tuples', (done)->
+      this.timeout(5000)
+      ts = new TupleSpace
+      ts.write {a:1, b:2}, {expire: 3}
+      ts.write {a:1, b:2, c:3}, {expire: 1}
+      ts.write new Tuple({name: "shokai"}), {expire: 3}
+      ts.write {foo: "bar"}
+
+      assert.equal ts.size, 4
+      assert.deepEqual ts.read({a:1, b:2, c:3}).data, {a:1, b:2, c:3}
+
+      setTimeout ->
+        ts.check_expire()
+        assert.equal ts.size, 3
+        assert.deepEqual ts.read({a:1, b:2}).data, {a:1, b:2}
+        setTimeout ->
+          ts.check_expire()
+          assert.equal ts.size, 1
+          assert.deepEqual ts.read({}).data, {foo: "bar"}
+          done()
+        , 2000
+      , 2000

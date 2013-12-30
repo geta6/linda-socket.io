@@ -4,7 +4,12 @@ module.exports = class Tuple
     return false if !data or data instanceof Array or typeof data != "object"
     return true
 
+  @DEFAULT = {expire: 300}
+
   constructor: (@data)->
+    @__defineSetter__ 'expire', (sec)->
+      @expire_at = Math.floor(new Date()/1000)+sec
+    @expire = 300
 
   match: (tuple)->
     return false unless Tuple.isHash(tuple)
