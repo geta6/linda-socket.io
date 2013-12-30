@@ -1,7 +1,8 @@
 ## linda client for webbrowser
 
-class Linda
+class LindaClient
   connect: (@io) ->
+    return @
 
   tuplespace: (name) ->
     return new TupleSpace @io, name
@@ -34,7 +35,7 @@ class TupleSpace
       callback null, tuple
     @io.emit '__linda_watch', {tuplespace: @name, tuple: tuple, id: id}
 
-if window
-  window.linda = new Linda
-else if module and module.exports
-  module.exports = Linda
+if window?
+  window.linda = new LindaClient
+else if module? and module.exports?
+  module.exports = LindaClient

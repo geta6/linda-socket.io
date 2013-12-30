@@ -6,6 +6,7 @@ socketio = require 'socket.io'
 
 TupleSpace = module.exports.TupleSpace = require __dirname+'/tuplespace'
 Tuple = module.exports.Tuple = require __dirname+'/tuple'
+module.exports.Client = require __dirname+'/linda-socketio-client'
 
 class Linda extends events.EventEmitter
   constructor: ->

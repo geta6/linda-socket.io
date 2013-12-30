@@ -9,16 +9,15 @@
 
   linda.connect(socket);
 
-  ts = linda.tuplespace("test");
+  ts = linda.tuplespace("chatroom1");
 
   socket.on('connect', function() {
-    return print("connect!!!");
-  });
-
-  ts.watch({
-    type: "chat"
-  }, function(err, tuple) {
-    return print("> " + tuple.data.message);
+    print("connect!!!");
+    return ts.watch({
+      type: "chat"
+    }, function(err, tuple) {
+      return print("> " + tuple.data.message);
+    });
   });
 
   jQuery(function() {
