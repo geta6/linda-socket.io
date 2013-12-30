@@ -1,8 +1,10 @@
+## linda client for webbrowser
+
 class Linda
   connect: (@io) ->
 
   tuplespace: (name) ->
-    new TupleSpace @io, name
+    return new TupleSpace @io, name
 
 class TupleSpace
   constructor: (@io, @name) ->
@@ -10,4 +12,4 @@ class TupleSpace
   write: (tuple) ->
     @io.emit '__linda_write', {tuplespace: @name, tuple: tuple}
 
-linda = new Linda
+window.linda = new Linda
