@@ -39,19 +39,27 @@ class Linda extends events.EventEmitter
         @.emit 'write', data
 
       socket.on '__linda_take', (data) =>
-        @tuplespace(data.tuplespace).take data.tuple, (err, tuple) ->
+        cid = @tuplespace(data.tuplespace).take data.tuple, (err, tuple) ->
+          cid = null
           socket.emit "__linda_take_#{data.id}", tuple
         @.emit 'take', data
+        socket.once 'disconnect', =>
+          @tuplespace(data.tuplespace).cancel cid if cid
 
       socket.on '__linda_read', (data) =>
-        @tuplespace(data.tuplespace).read data.tuple, (err, tuple) ->
+        cid = @tuplespace(data.tuplespace).read data.tuple, (err, tuple) ->
+          cid = null
           socket.emit "__linda_read_#{data.id}", tuple
         @.emit 'read', data
+        socket.once 'disconnect', =>
+          @tuplespace(data.tuplespace).cancel cid if cid
 
       socket.on '__linda_watch', (data) =>
-        @tuplespace(data.tuplespace).watch data.tuple, (err, tuple) ->
+        cid = @tuplespace(data.tuplespace).watch data.tuple, (err, tuple) ->
           socket.emit "__linda_watch_#{data.id}", tuple
         @emit 'watch', data
+        socket.once 'disconnect', =>
+          @tuplespace(data.tuplespace).cancel cid if cid
 
     return @
 
