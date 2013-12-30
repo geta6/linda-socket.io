@@ -12,6 +12,7 @@ module.exports = class TupleSpace
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
     tuple.expire = options.expire
     called = []
+    taked = false
     for i in [0...@callbacks.length]
       c = @callbacks[i]
       if c.tuple.match tuple
@@ -19,10 +20,12 @@ module.exports = class TupleSpace
         ((c)->
           setImmediate -> c.callback(null, tuple)
         ).call(this, c)
-        break if c.type == 'take'
+        if c.type == 'take'
+          taked = true
+          break
     for i in called by -1
       @callbacks.splice i, 1
-    @tuples.push tuple
+    @tuples.push tuple unless taked
 
   create_callback_id: ->
     new Date()-Math.random()

@@ -15,12 +15,22 @@ app_handler = (req, res) ->
 
 app = http.createServer(app_handler)
 io = require('socket.io').listen(app)
-linda = require('../').Linda.listen(io: io, server: app)
 io.configure 'development', ->
   io.set 'log level', 2
 
 io.sockets.on 'connection', (socket) ->
   socket.once 'disconnect', ->
+
+## linda = require('linda-socket.io').Linda.listen(io: io, server: app)
+linda = require('../../').Linda.listen(io: io, server: app)
+linda.on 'write', (data) ->
+  console.log "write tuple - #{JSON.stringify data}"
+
+linda.on 'watch', (data) ->
+  console.log "watch tuple - #{JSON.stringify data}"
+
+linda.on 'take', (data) ->
+  console.log "take tuple - #{JSON.stringify data}"
 
 port = process.argv[2]-0 || 3000
 app.listen port

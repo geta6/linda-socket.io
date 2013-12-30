@@ -1,22 +1,23 @@
 http = require 'http'
 url  = require 'url'
 fs = require 'fs'
+events = require 'events'
 socketio = require 'socket.io'
 
-module.exports.TupleSpace = require __dirname+'/tuplespace'
-module.exports.Tuple = require __dirname+'/tuple'
+TupleSpace = module.exports.TupleSpace = require __dirname+'/tuplespace'
+Tuple = module.exports.Tuple = require __dirname+'/tuple'
 
-class Linda
+class Linda extends events.EventEmitter
   constructor: ->
+    @spaces = {}
+
     fs.readFile __dirname+"/linda-socketio-client.js", (err, data) =>
       throw new Error "client js load error" if err
       @client_js_code = data
 
-  tuplespaces = {}
-
-  tuplespace = (name) ->
-    console.log "accessedd tuplespace - #{name}"
-    tuplespaces[name] || tuplespace[name] = new TupleSpace(name)
+  tuplespace: (name) ->
+    return @spaces[name] ||
+           @spaces[name] = new TupleSpace(name)
 
   listen: (opts = {io: null, server: null}) ->
     unless opts.io instanceof socketio.Manager
@@ -34,16 +35,25 @@ class Linda
 
     @io.sockets.on 'connection', (socket) =>
       socket.on '__linda_write', (data) =>
-        console.log "write tuple #{JSON.stringify data.tuple}"
-        tuplespace(data.tuplespace).write data.tuple
+        @tuplespace(data.tuplespace).write data.tuple
+        @.emit 'write', data
 
-class TupleSpace
-  constructor: (@name) ->
-    @tuples = []
+      socket.on '__linda_take', (data) =>
+        @tuplespace(data.tuplespace).take data.tuple, (err, tuple) ->
+          socket.emit "__linda_take_#{data.id}", tuple
+        @.emit 'take', data
 
-  write: (tuple) ->
-    @tuples << tuple
-    console.log tuple
-    
+      socket.on '__linda_read', (data) =>
+        @tuplespace(data.tuplespace).read data.tuple, (err, tuple) ->
+          socket.emit "__linda_read_#{data.id}", tuple
+        @.emit 'read', data
+
+      socket.on '__linda_watch', (data) =>
+        @tuplespace(data.tuplespace).watch data.tuple, (err, tuple) ->
+          socket.emit "__linda_watch_#{data.id}", tuple
+        @emit 'watch', data
+
+    return @
+
 
 module.exports.Linda = new Linda

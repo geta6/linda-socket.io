@@ -147,10 +147,12 @@ describe 'instance of "TupleSpace"', ->
         done()
 
       assert.equal ts.callbacks.length, 3
+      assert.equal ts.size, 0
       ts.write {a:1, b:2, c:3}
       ts.write {a:1, b:2, c:3, d:4}
       ts.write {sensor: "light", value: 80}
       assert.equal ts.callbacks.length, 0
+      assert.equal ts.size, 3
 
     it 'should not return Tuple if canceled', (done)->
       ts = new TupleSpace
@@ -209,9 +211,12 @@ describe 'instance of "TupleSpace"', ->
         done()
 
       assert.equal ts.callbacks.length, 3
+      assert.equal ts.size, 0
       ts.write {a:1, b:2, c:3}
       ts.write {foo: "bar"}
       ts.write {a:1, b:2, c:300}
+      assert.equal ts.callbacks.length, 0
+      assert.equal ts.size, 0
 
     it 'should not return Tuple if cacneled', (done)->
       ts = new TupleSpace

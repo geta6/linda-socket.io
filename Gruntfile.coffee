@@ -31,7 +31,8 @@ module.exports = (grunt) ->
         files: [
           { expand: yes, cwd: 'src/', src: [ '**/*.coffee' ] }
           { expand: yes, cwd: 'tests/', src: [ '**/*.coffee' ] }
-          { expand: yes, cwd: 'sample/coffee/', src: [ '**/*.coffee' ] }
+          { expand: yes, cwd: 'samples/chat/coffee/', src: [ '**/*.coffee' ] }
+          { expand: yes, cwd: 'samples/job-queue/coffee/', src: [ '**/*.coffee' ] }
         ]
 
     coffee:
@@ -45,9 +46,16 @@ module.exports = (grunt) ->
         }
         {
           expand: yes
-          cwd: 'sample/coffee/'
+          cwd: 'samples/chat/coffee/'
           src: [ '**/*.coffee' ]
-          dest: 'sample/js/'
+          dest: 'samples/chat/js/'
+          ext: '.js'
+        }
+        {
+          expand: yes
+          cwd: 'samples/job-queue/coffee/'
+          src: [ '**/*.coffee' ]
+          dest: 'samples/job-queue/js/'
           ext: '.js'
         }]
 
@@ -64,5 +72,5 @@ module.exports = (grunt) ->
       options:
         interrupt: yes
       dist:
-        files: [ 'src/**/*.coffee', 'tests/**/*.coffee', 'sample/**/*.coffee' ]
+        files: [ 'src/**/*.coffee', 'tests/**/*.coffee', 'samples/**/*.coffee' ]
         tasks: [ 'test' ]
