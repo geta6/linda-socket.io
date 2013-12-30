@@ -20,8 +20,8 @@ module.exports = class TupleSpace
           setImmediate -> c.callback(null, tuple)
         ).call(this, c)
         break if c.type == 'take'
-    for i in [0...called.length]
-      @callbacks.splice called[i]-i, 1
+    for i in called by -1
+      @callbacks.splice i, 1
     @tuples.push tuple
 
   create_callback_id: ->
