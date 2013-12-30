@@ -11,36 +11,36 @@ Tuple = Linda.Tuple
 
 describe 'instance of "TupleSpace"', ->
 
-  it 'should have "name" property', ->
+  it 'should have property "name"', ->
     assert.equal new TupleSpace("foo").name, 'foo'
 
-  it 'should have "callbacks" property', ->
+  it 'should have property "callbacks"', ->
     ts = new TupleSpace()
     assert.ok ts.hasOwnProperty('callbacks')
     assert.ok ts.callbacks instanceof Array
 
-  it 'should have "create_callback_id" method', ->
+  it 'should have method "create_callback_id"', ->
     assert.equal typeof new TupleSpace()['create_callback_id'], 'function'
 
-  it 'should have "size" property', ->
+  it 'should have property "size"', ->
     assert.ok new TupleSpace().hasOwnProperty('size')
 
-  describe '"size" property', ->
+  describe 'property "size"', ->
 
     it 'should return number of Tuples', ->
       assert.equal new TupleSpace().size, 0
 
-  it 'should have "write" method', ->
+  it 'should have method "write"', ->
     assert.equal typeof new TupleSpace()['write'], 'function'
 
-  it 'should have "cancel" method', ->
+  it 'should have method "cancel"', ->
     assert.equal typeof new TupleSpace()['cancel'], 'function'
 
-  it 'should have "check_expire" method', ->
+  it 'should have method "check_expire"', ->
     assert.equal typeof new TupleSpace()['check_expire'], 'function'
 
 
-  describe '"write" method', ->
+  describe 'method "write"', ->
 
     it 'should store HashTuples', ->
       ts = new TupleSpace("foo")
@@ -58,10 +58,10 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.size, 0
 
 
-  it 'should have "read" method', ->
+  it 'should have method "read"', ->
     assert.equal typeof new TupleSpace()['read'], 'function'
 
-  describe '"read" method', ->
+  describe 'method "read"', ->
     ts = new TupleSpace("foo")
     ts.write {a:1, b:2, c:3}
     ts.write {a:1, b:2, d:88}
@@ -87,10 +87,10 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.size, 3
 
 
-  it 'should have "take" method', ->
+  it 'should have method "take"', ->
     assert.equal typeof new TupleSpace()['take'], 'function'
 
-  describe '"take" method', ->
+  describe 'method "take"', ->
     ts = new TupleSpace
     ts.write {a:1, b:2, c:3}
     ts.write {a:1, b:2, d:88}
@@ -114,7 +114,7 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.size, 0
       assert.equal ts.take({}), null
 
-  describe '"read" method with callback', ->
+  describe 'method "read" with callback', ->
 
     it 'should return cancel_id', ->
       ts = new TupleSpace
@@ -174,7 +174,7 @@ describe 'instance of "TupleSpace"', ->
       ts.write {a:1, b:2}
       assert.equal ts.callbacks.length, 0
 
-  describe '"take" method with callback', ->
+  describe 'method "take" with callback', ->
 
     it 'should return cancel_id', ->
       ts = new TupleSpace
@@ -235,7 +235,7 @@ describe 'instance of "TupleSpace"', ->
       ts.write {a:1, b:2}
       assert.equal ts.callbacks.length, 0
 
-  describe '"watch" method', ->
+  describe 'method "watch"', ->
 
     it 'should return cancel_id', ->
       ts = new TupleSpace
@@ -279,7 +279,7 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.callbacks.length, 1
       ts.write {a:1, b:2}
 
-  describe '"check_expire" method', ->
+  describe 'method "check_expire"', ->
 
     it 'should delete expired tuples', (done)->
       this.timeout(5000)

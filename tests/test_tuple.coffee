@@ -11,7 +11,7 @@ describe 'class "Tuple"', ->
 
   describe 'class-property "DEFAULT"', ->
 
-    it 'should have "expire" property', ->
+    it 'should have property "expire"', ->
       assert.equal typeof Tuple.DEFAULT.expire, 'number'
       assert.ok Tuple.DEFAULT.expire > 0
 
@@ -27,7 +27,7 @@ describe 'class "Tuple"', ->
       assert.equal Tuple.isHash("foo"), false
 
     it 'should return false if Number', ->
-      assert.equal Tuple.isHash(401), false
+      assert.equal Tuple.isHash(58), false
 
     it 'should return false if Array', ->
       assert.equal Tuple.isHash([1,2,3]), false
@@ -40,10 +40,10 @@ describe 'instance of Tuple {a:1, b:2}', ->
 
   tuple = new Tuple(a:1, b:2)
 
-  it 'should have "expire_at" property', ->
+  it 'should have property "expire_at"', ->
     assert.ok tuple.hasOwnProperty('expire_at')
 
-  it 'should have "data" property', ->
+  it 'should have property "data"', ->
     assert.ok tuple.hasOwnProperty('data')
     assert.ok tuple.expire_at > new Date()/1000
 
@@ -71,7 +71,7 @@ describe 'instance of Tuple {a:1, b:2}', ->
   it 'should not match new Tuple({a:1, b:"foo"})', ->
     assert.equal tuple.match(new Tuple({a:1, b:"foo"})), false
 
-describe 'new Tuple({arr: [1,2,3]})', ->
+describe 'instance of Tuple {arr: [1,2,3]}', ->
 
   tuple = new Tuple(arr: [1,2,3])
 
