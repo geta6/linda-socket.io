@@ -16,6 +16,8 @@ app_handler = (req, res) ->
 app = http.createServer(app_handler)
 io = require('socket.io').listen(app)
 linda = require('../').Linda.listen(io: io, server: app)
+io.configure 'development', ->
+  io.set 'log level', 2
 
 io.sockets.on 'connection', (socket) ->
   socket.once 'disconnect', ->
