@@ -35,6 +35,8 @@ class Linda extends events.EventEmitter
         res.end @client_js_code
 
     @io.sockets.on 'connection', (socket) =>
+      cids = {}
+
       socket.on '__linda_write', (data) =>
         @tuplespace(data.tuplespace).write data.tuple
         @.emit 'write', data
@@ -42,7 +44,8 @@ class Linda extends events.EventEmitter
       socket.on '__linda_take', (data) =>
         cid = @tuplespace(data.tuplespace).take data.tuple, (err, tuple) ->
           cid = null
-          socket.emit "__linda_take_#{data.id}", tuple
+          socket.emit "__linda_take_#{data.id}", err, tuple
+        cids[data.id] = cid
         @.emit 'take', data
         socket.once 'disconnect', =>
           @tuplespace(data.tuplespace).cancel cid if cid
@@ -50,17 +53,22 @@ class Linda extends events.EventEmitter
       socket.on '__linda_read', (data) =>
         cid = @tuplespace(data.tuplespace).read data.tuple, (err, tuple) ->
           cid = null
-          socket.emit "__linda_read_#{data.id}", tuple
+          socket.emit "__linda_read_#{data.id}", err, tuple
+        cids[data.id] = cid
         @.emit 'read', data
         socket.once 'disconnect', =>
           @tuplespace(data.tuplespace).cancel cid if cid
 
       socket.on '__linda_watch', (data) =>
         cid = @tuplespace(data.tuplespace).watch data.tuple, (err, tuple) ->
-          socket.emit "__linda_watch_#{data.id}", tuple
+          socket.emit "__linda_watch_#{data.id}", err, tuple
+        cids[data.id] = cid
         @emit 'watch', data
         socket.once 'disconnect', =>
           @tuplespace(data.tuplespace).cancel cid if cid
+
+      socket.on '__linda_cancel', (data) =>
+        @tuplespace(data.tuplespace).cancel cids[data.id]
 
     return @
 

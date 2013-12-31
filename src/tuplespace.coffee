@@ -82,6 +82,7 @@ module.exports = class TupleSpace
     return id
 
   cancel: (id)->
+    return unless id?
     for i in [0...@callbacks.length]
       c = @callbacks[i]
       if id == c.id

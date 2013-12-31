@@ -88,6 +88,10 @@ describe 'instance of LindaClient', ->
 
     describe 'method "watch"', ->
 
+      it 'should return cancel_id', ->
+        cid = create_client().tuplespace('watch_cancel').watch {}, ->
+        assert.ok cid > 0
+
       it 'should return matched Tuple', (done) ->
         writer = create_client()
         watcher = create_client()
@@ -110,7 +114,35 @@ describe 'instance of LindaClient', ->
         writer.tuplespace('watch').write {sensor: "light", value: val_b}
 
 
+      it 'should not return Tuple if canceled', (done) ->
+        linda = create_client()
+        ts = linda.tuplespace('watch_cancel_test')
+        cid = null
+        async.parallel [
+          (async_done) ->
+            cid_ = ts.watch {a:1}, (err, tuple) ->
+              assert.deepEqual tuple.data, {a:1, b:2}
+              async_done(null, cid_)
+          (async_done) ->
+            cid = ts.watch {}, (err, tuple) ->
+              assert.equal err, "cancel"
+              async_done(null, cid)
+        ], (err, callback_ids) ->
+          assert.notEqual callback_ids[0], callback_ids[1]
+          assert.equal server_ts.callbacks.length, 1
+          done()
+
+        server_ts = server.linda.tuplespace('watch_cancel_test')
+        assert.equal server_ts.callbacks.length, 0
+        ts.cancel cid
+        ts.write {a:1, b:2}
+
+
     describe 'method "read"', ->
+
+      it 'should return cancel_id', ->
+        cid = create_client().tuplespace('read_cancel').read {}, ->
+        assert.ok cid > 0
 
       it 'should return matched Tuple', (done) ->
         reader = create_client()
@@ -148,8 +180,35 @@ describe 'instance of LindaClient', ->
 
         writer.tuplespace('read_callback').write {type: "chat", message: msg}
 
+      it 'should not return Tuple if canceled', (done) ->
+        linda = create_client()
+        ts = linda.tuplespace('read_cancel_test')
+        cid = null
+        async.parallel [
+          (async_done) ->
+            cid_ = ts.read {a:1}, (err, tuple) ->
+              assert.deepEqual tuple.data, {a:1, b:2}
+              async_done(null, cid_)
+          (async_done) ->
+            cid = ts.read {}, (err, tuple) ->
+              assert.equal err, "cancel"
+              async_done(null, cid)
+        ], (err, callback_ids) ->
+          assert.notEqual callback_ids[0], callback_ids[1]
+          assert.equal server_ts.callbacks.length, 0
+          done()
+
+        server_ts = server.linda.tuplespace('read_cancel_test')
+        assert.equal server_ts.callbacks.length, 0
+        ts.cancel cid
+        ts.write {a:1, b:2}
+
 
     describe 'method "take"', ->
+
+      it 'should return cancel_id', ->
+        cid = create_client().tuplespace('take_cancel').take {}, ->
+        assert.ok cid > 0
 
       it 'should return matched Tuple and delete', (done) ->
         taker = create_client()
@@ -186,3 +245,27 @@ describe 'instance of LindaClient', ->
           done()
 
         writer.tuplespace('take_callback').write {type: "chat", message: msg}
+
+      it 'should not return Tuple if canceled', (done) ->
+        linda = create_client()
+        ts = linda.tuplespace('take_cancel_test')
+        cid = null
+        async.parallel [
+          (async_done) ->
+            cid_ = ts.take {a:1}, (err, tuple) ->
+              assert.deepEqual tuple.data, {a:1, b:2}
+              async_done(null, cid_)
+          (async_done) ->
+            cid = ts.take {}, (err, tuple) ->
+              assert.equal err, "cancel"
+              async_done(null, cid)
+        ], (err, callback_ids) ->
+          assert.notEqual callback_ids[0], callback_ids[1]
+          assert.equal server_ts.callbacks.length, 0
+          done()
+
+        server_ts = server.linda.tuplespace('take_cancel_test')
+        assert.equal server_ts.callbacks.length, 0
+        ts.cancel cid
+        ts.write {a:1, b:2}
+
