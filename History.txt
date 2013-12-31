@@ -1,6 +1,10 @@
-=== 0.0.5 2013-12-31
+=== 0.0.6 2014-1-1
 
-* modify watch algorithm
+* bugfix TupleSpace.watch()  #8
+
+=== 0.0.5 2014-1-1
+
+* modify watch algorithm  #8
 
 === 0.0.4 2013-12-31
 
