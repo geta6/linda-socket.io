@@ -1,8 +1,8 @@
 ## Linda = require('linda-socket.io').Client
-Linda = require('../../').Client
+LindaClient = require('../../').Client
 socket = require('socket.io-client').connect('http://localhost:3000')
 
-linda = new Linda().connect(socket)
+linda = new LindaClient().connect(socket)
 ts = linda.tuplespace('chatroom1')
 
 socket.on 'connect', ->
