@@ -28,17 +28,17 @@ Linda is a coordination launguage for parallel programming.
 
 
 ### TupleSpace
-Shared memory on Sinatra.
+Shared memory on Node.js server.
 
 
 ### Tuple Operations
 - write( tuple )
   - put a Tuple into the TupleSpace
-- take( tuple, callback(tuple) )
+- take( tuple, callback(err, tuple) )
   - get a matched Tuple from the TupleSpace and delete
-- read( tuple, callback(tuple) )
+- read( tuple, callback(err, tuple) )
   - get a matched Tuple from the TupleSpace
-- watch( tuple, callback(tuple) )
+- watch( tuple, callback(err, tuple) )
   - overwatch written Tuples in the TupleSpace
 
 
@@ -129,6 +129,7 @@ $("#btn_request").click(function(){
 socket.on('connect', function(){
   // overwatch Tuple
   ts.watch({type: 'result'}, function(err, tuple){
+    if(err) return;
     console.log(tuple.data.result); // => "1-2+3*4 = 11"
   });
 });
@@ -143,9 +144,11 @@ var ts = linda.tuplespace("calc");
 // calculate
 var work = function(){
   ts.take({type: 'request'}, function(err, tuple){
-    var result = eval(tuple.data.query); // => "1-2+3*4"
-    console.log(tuple.data.query+" = "+result); // => "1-2+3*4 = 11"
-    ts.write({type: 'result', result: result}); // return to 'client' side
+    if(!err){
+      var result = eval(tuple.data.query); // => "1-2+3*4"
+      console.log(tuple.data.query+" = "+result); // => "1-2+3*4 = 11"
+      ts.write({type: 'result', result: result}); // return to 'client' side
+    }
     work(); // recursive call
   });
 };
