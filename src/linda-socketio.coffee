@@ -72,6 +72,7 @@ class Linda extends events.EventEmitter
 
       socket.on '__linda_cancel', (data) =>
         @tuplespace(data.tuplespace).cancel cids[data.id]
+        watch_cids[data.id] = false
 
     return @
 
