@@ -59,7 +59,10 @@ class Linda extends events.EventEmitter
         socket.once 'disconnect', =>
           @tuplespace(data.tuplespace).cancel cid if cid
 
+      watch_cids = {}
       socket.on '__linda_watch', (data) =>
+        return if watch_cids[data.id]  # not watch if already watching
+        watch_cids[data.id] = true
         cid = @tuplespace(data.tuplespace).watch data.tuple, (err, tuple) ->
           socket.emit "__linda_watch_#{data.id}", err, tuple
         cids[data.id] = cid

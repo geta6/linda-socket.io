@@ -10,9 +10,14 @@ class LindaClient
 class TupleSpace
 
   constructor: (@io, @name) ->
+    @watch_cids = {}
 
   create_callback_id: ->
     return new Date()-Math.random()
+
+  create_watch_callback_id: (tuple) ->
+    key = JSON.stringify tuple
+    return @watch_cids[key] || @watch_cids[key] = @create_callback_id()
 
   write: (tuple) ->
     @io.emit '__linda_write', {tuplespace: @name, tuple: tuple}
@@ -32,7 +37,7 @@ class TupleSpace
     return id
 
   watch: (tuple, callback) ->
-    id = @create_callback_id()
+    id = @create_watch_callback_id tuple
     @io.on "__linda_watch_#{id}", (err, tuple) ->
       callback err, tuple
     @io.emit '__linda_watch', {tuplespace: @name, tuple: tuple, id: id}

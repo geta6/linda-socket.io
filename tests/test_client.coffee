@@ -50,6 +50,10 @@ describe 'instance of LindaClient', ->
       ts = create_client().tuplespace('test')
       assert.equal typeof ts['create_callback_id'], 'function'
 
+    it 'should have method "create_watch_callback_id"', ->
+      ts = create_client().tuplespace('test')
+      assert.equal typeof ts['create_watch_callback_id'], 'function'
+
     it 'should have method "write"', ->
       ts = create_client().tuplespace('test')
       assert.equal typeof ts['write'], 'function'
@@ -136,6 +140,35 @@ describe 'instance of LindaClient', ->
         assert.equal server_ts.callbacks.length, 0
         ts.cancel cid
         ts.write {a:1, b:2}
+
+      it 'should use same callback_id for same Tuple watch', (done) ->
+        linda = create_client()
+        ts = linda.tuplespace('watch_callback_id')
+        server_ts = server.linda.tuplespace('watch_callback_id')
+        assert.equal server_ts.callbacks.length, 0
+
+        async.parallel [
+          (async_done) ->
+            cid = ts.watch {sensor: "light"}, (err, tuple) ->
+              assert.deepEqual tuple.data, {sensor: "light", value: 8}
+              async_done(null, cid)
+          (async_done) ->
+            # watch same tuple
+            cid = ts.watch {sensor: "light"}, (err, tuple) ->
+              assert.deepEqual tuple.data, {sensor: "light", value: 8}
+              async_done(null, cid)
+          (async_done) ->
+            cid = ts.watch {sensor: "temperature"}, (err, tuple) ->
+              assert.deepEqual tuple.data, {sensor: "temperature", value: 19}
+              async_done(null, cid)
+        ], (err, callback_ids) ->
+          assert.equal callback_ids[0], callback_ids[1]
+          assert.notEqual callback_ids[0], callback_ids[2]
+          assert.equal server_ts.callbacks.length, 2
+          done()
+
+        ts.write {sensor: "light", value: 8}
+        ts.write {sensor: "temperature", value: 19}
 
 
     describe 'method "read"', ->
