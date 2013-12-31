@@ -3,6 +3,7 @@ Linda Socket.IO
 <a href="http://en.wikipedia.org/wiki/Linda_(coordination_language)">Coordinatioin Launguage "Linda"</a> implementation for Node.js and Socket.IO
 
 - https://github.com/shokai/linda-socket.io
+- https://npmjs.org/package/linda-socket.io
 
 [![Travis CI Status Badge](https://travis-ci.org/shokai/linda-socket.io.png)](https://travis-ci.org/shokai/linda-socket.io)
 
@@ -45,13 +46,15 @@ Shared memory on Node.js server.
 Samples
 -------
 
-https://github.com/shokai/linda-socket.io/tree/master/samples
+- https://github.com/shokai/linda-socket.io/tree/master/samples
+- https://github.com/shokai/linda-job-queue-sample
+
+## Install Dependencies
 
     % git clone https://github.com/shokai/linda-socket.io.git
     % cd linda-socket.io
     % npm install
-    % npm install -g grunt-cli
-    % npm install -g coffee-script
+    % npm install -g grunt-cli coffee-script
 
 
 ### Chat
@@ -160,12 +163,14 @@ socket.on('connect', function(){ // Socket.IO's "connect" event
 });
 ```
 
-see [samples](https://github.com/shokai/linda-socket.io/tree/master/samples)
+see more [samples](https://github.com/shokai/linda-socket.io/tree/master/samples)
+
 
 Test
 ----
 
-    % npm install -g grunt-cli
+    % npm install
+    % npm install -g grunt-cli coffee-script
     % grunt test
 
 watch
