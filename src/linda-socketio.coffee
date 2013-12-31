@@ -21,7 +21,7 @@ class Linda extends events.EventEmitter
            @spaces[name] = new TupleSpace(name)
 
   listen: (opts = {io: null, server: null}) ->
-    unless opts.io instanceof socketio.Manager
+    unless opts.io?
       throw new Error '"io" must be instance of Socket.IO'
     unless opts.server instanceof http.Server
       throw new Error '"server" must be instance of http.Server'
