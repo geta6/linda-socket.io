@@ -18,8 +18,6 @@ io = require('socket.io').listen(app)
 io.configure 'development', ->
   io.set 'log level', 2
 
-io.sockets.on 'connection', (socket) ->
-  socket.once 'disconnect', ->
 
 ## linda = require('linda-socket.io').Linda.listen(io: io, server: app)
 linda = require('../../').Linda.listen(io: io, server: app)
