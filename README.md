@@ -45,6 +45,8 @@ Shared memory on Node.js server.
 Samples
 -------
 
+https://github.com/shokai/linda-socket.io/tree/master/samples
+
     % git clone https://github.com/shokai/linda-socket.io.git
     % cd linda-socket.io
     % npm install
