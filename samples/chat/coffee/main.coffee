@@ -3,7 +3,7 @@ print = (msg) ->
 
 socket = io.connect("#{location.protocol}//#{location.hostname}")
 
-linda.connect(socket)
+linda = new Linda().connect(socket)
 ts = linda.tuplespace("chatroom1")
 
 socket.on 'connect', ->

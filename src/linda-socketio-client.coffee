@@ -43,6 +43,6 @@ class TupleSpace
 
 
 if window?
-  window.linda = new LindaClient
+  window.Linda = LindaClient
 else if module? and module.exports?
   module.exports = LindaClient

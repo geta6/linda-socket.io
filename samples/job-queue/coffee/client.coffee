@@ -2,7 +2,7 @@ print = (msg) ->
   $('#log').prepend $('<p>').text(msg)
 
 socket = io.connect("#{location.protocol}//#{location.hostname}")
-linda.connect(socket)
+linda = new Linda().connect(socket)
 ts = linda.tuplespace("calc")
 
 socket.on 'connect', ->

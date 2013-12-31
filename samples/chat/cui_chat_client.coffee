@@ -1,4 +1,4 @@
-## Linda = require('linda-socket.io').Client
+## LindaClient = require('linda-socket.io').Client
 LindaClient = require('../../').Client
 socket = require('socket.io-client').connect('http://localhost:3000')
 
