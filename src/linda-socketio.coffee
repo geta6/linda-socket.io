@@ -30,7 +30,7 @@ class Linda extends events.EventEmitter
 
     @server.on 'request', (req, res) =>
       _url = url.parse(decodeURI(req.url), true)
-      if _url.pathname == "/js/linda-socketio.js"
+      if _url.pathname == "/linda/linda-socket.io.js"
         res.writeHead 200
         res.end @client_js_code
 
