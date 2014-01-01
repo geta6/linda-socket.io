@@ -11,6 +11,6 @@ socket.on 'connect', ->
     print "> #{tuple.data.result}"
 
 jQuery ->
-  $('#btn_request').click (e)->
+  $('#btn_request').click (e) ->
     query = $('#query').val()
     ts.write {type: 'request', query: query}

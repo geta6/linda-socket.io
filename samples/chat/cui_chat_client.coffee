@@ -12,7 +12,7 @@ socket.on 'connect', ->
     console.log "> #{tuple.data.message}"
 
 process.stdin.setEncoding 'utf8'
-process.stdin.on 'data', (data)->
+process.stdin.on 'data', (data) ->
     ts.write {type: "chat", message: data.replace(/[\r\n]/g, '')}
 
 

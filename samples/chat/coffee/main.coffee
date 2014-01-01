@@ -13,6 +13,6 @@ socket.on 'connect', ->
     print "> #{tuple.data.message}"
 
 jQuery ->
-  $('#btn_send').click (e)->
+  $('#btn_send').click (e) ->
     msg = $('#msg_body').val()
     ts.write {type: "chat", message: msg}

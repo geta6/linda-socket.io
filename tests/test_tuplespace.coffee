@@ -121,29 +121,29 @@ describe 'instance of "TupleSpace"', ->
       cid = ts.read {}, ->
       assert.ok cid > 0
 
-    it 'should return matched Tuple', (done)->
+    it 'should return matched Tuple', (done) ->
       ts = new TupleSpace
       ts.write {a:1, b:2, c:3}
-      ts.read {a:1, c:3}, (err, tuple)->
+      ts.read {a:1, c:3}, (err, tuple) ->
         assert.deepEqual tuple.data, {a:1, b:2, c:3}
         done()
 
-    it 'should wait if Tuple not found', (done)->
+    it 'should wait if Tuple not found', (done) ->
       ts = new TupleSpace
       async.parallel [
-        (async_done)->
-          ts.read {a:1, d:4}, (err, tuple)->
+        (async_done) ->
+          ts.read {a:1, d:4}, (err, tuple) ->
             assert.deepEqual tuple.data, {a:1, b:2, c:3, d:4}
             async_done(null, tuple)
-        (async_done)->
-          ts.read {sensor: "light"}, (err, tuple)->
+        (async_done) ->
+          ts.read {sensor: "light"}, (err, tuple) ->
             assert.deepEqual tuple.data, {sensor: "light", value: 80}
             async_done(null, tuple)
-        (async_done)->
-          ts.read {}, (err, tuple)->
+        (async_done) ->
+          ts.read {}, (err, tuple) ->
             assert.deepEqual tuple.data, {a:1, b:2, c:3}
             async_done(null, tuple)
-      ], (err, results)->
+      ], (err, results) ->
         done()
 
       assert.equal ts.callbacks.length, 3
@@ -154,19 +154,19 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.callbacks.length, 0
       assert.equal ts.size, 3
 
-    it 'should not return Tuple if canceled', (done)->
+    it 'should not return Tuple if canceled', (done) ->
       ts = new TupleSpace
       cid = null
       async.parallel [
-        (async_done)->
-          cid_ = ts.read {a:1}, (err, tuple)->
+        (async_done) ->
+          cid_ = ts.read {a:1}, (err, tuple) ->
             assert.deepEqual tuple.data, {a:1, b:2}
             async_done(null, cid_)
-        (async_done)->
-          cid = ts.read {}, (err, tuple)->
+        (async_done) ->
+          cid = ts.read {}, (err, tuple) ->
             assert.equal err, "cancel"
             async_done(null, cid)
-      ], (err, callback_ids)->
+      ], (err, callback_ids) ->
         assert.notEqual callback_ids[0], callback_ids[1]
         done()
 
@@ -183,30 +183,30 @@ describe 'instance of "TupleSpace"', ->
       cid = ts.take {}, ->
       assert.ok cid > 0
 
-    it 'should return matched Tuple and delete', (done)->
+    it 'should return matched Tuple and delete', (done) ->
       ts = new TupleSpace
       ts.write {a:1, b:2, c:3}
-      ts.take {a:1, c:3}, (err, tuple)->
+      ts.take {a:1, c:3}, (err, tuple) ->
         assert.deepEqual tuple.data, {a:1, b:2, c:3}
         assert.equal ts.size, 0
         done()
 
-    it 'should wait if Tuple not found', (done)->
+    it 'should wait if Tuple not found', (done) ->
       ts = new TupleSpace
       async.parallel [
-        (async_done)->
-          ts.take {a:1, b:2}, (err, tuple)->
+        (async_done) ->
+          ts.take {a:1, b:2}, (err, tuple) ->
             assert.deepEqual tuple.data, {a:1, b:2, c:3}
             async_done(null, tuple)
-        (async_done)->
-          ts.take {foo: "bar"}, (err, tuple)->
+        (async_done) ->
+          ts.take {foo: "bar"}, (err, tuple) ->
             assert.deepEqual tuple.data, {foo: "bar"}
             async_done(null, tuple)
-        (async_done)->
-          ts.take {a:1, b:2}, (err, tuple)->
+        (async_done) ->
+          ts.take {a:1, b:2}, (err, tuple) ->
             assert.deepEqual tuple.data, {a:1, b:2, c:300}
             async_done(null, tuple)
-      ], (err, results)->
+      ], (err, results) ->
         assert.equal ts.callbacks.length, 0
         done()
 
@@ -218,19 +218,19 @@ describe 'instance of "TupleSpace"', ->
       assert.equal ts.callbacks.length, 0
       assert.equal ts.size, 0
 
-    it 'should not return Tuple if cacneled', (done)->
+    it 'should not return Tuple if cacneled', (done) ->
       ts = new TupleSpace
       cid = null
       async.parallel [
-        (async_done)->
-          cid_ = ts.take {a:1}, (err, tuple)->
+        (async_done) ->
+          cid_ = ts.take {a:1}, (err, tuple) ->
             assert.deepEqual tuple.data, {a:1, b:2}
             async_done(null, cid_)
-        (async_done)->
-          cid = ts.take {}, (err, tuple)->
+        (async_done) ->
+          cid = ts.take {}, (err, tuple) ->
             assert.equal err, "cancel"
             async_done(null, cid)
-      ], (err, callback_ids)->
+      ], (err, callback_ids) ->
         assert.notEqual callback_ids[0], callback_ids[1]
         done()
 
@@ -247,11 +247,11 @@ describe 'instance of "TupleSpace"', ->
       cid = ts.watch {}, ->
       assert.ok cid > 0
 
-    it 'should return Tuple when write(tuple)', (done)->
+    it 'should return Tuple when write(tuple)', (done) ->
       ts = new TupleSpace
 
       results = []
-      ts.watch {a:1, b:2}, (err, tuple)->
+      ts.watch {a:1, b:2}, (err, tuple) ->
         results.push tuple.data
         if results.length == 2
           assert.deepEqual results,
@@ -263,19 +263,19 @@ describe 'instance of "TupleSpace"', ->
       ts.write {a:1}
       ts.write {a:1, b:2, name: "shokai"}
 
-    it 'should not return Tuple if canceled', (done)->
+    it 'should not return Tuple if canceled', (done) ->
       ts = new TupleSpace
       cid = null
       async.parallel [
-        (async_done)->
-          cid_ = ts.watch {a:1}, (err, tuple)->
+        (async_done) ->
+          cid_ = ts.watch {a:1}, (err, tuple) ->
             assert.deepEqual tuple.data, {a:1, b:2}
             async_done(null, cid_)
-        (async_done)->
-          cid = ts.watch {}, (err, tuple)->
+        (async_done) ->
+          cid = ts.watch {}, (err, tuple) ->
             assert.equal err, "cancel"
             async_done(null, cid)
-      ], (err, callback_ids)->
+      ], (err, callback_ids) ->
         assert.notEqual callback_ids[0], callback_ids[1]
         done()
 
@@ -286,7 +286,7 @@ describe 'instance of "TupleSpace"', ->
 
   describe 'method "check_expire"', ->
 
-    it 'should delete expired tuples', (done)->
+    it 'should delete expired tuples', (done) ->
       this.timeout(5000)
       ts = new TupleSpace
       ts.write {a:1, b:2}, {expire: 3}

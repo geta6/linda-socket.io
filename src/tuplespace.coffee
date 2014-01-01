@@ -1,13 +1,13 @@
 Tuple = require __dirname+'/tuple'
 
 module.exports = class TupleSpace
-  constructor: (@name='noname')->
+  constructor: (@name='noname') ->
     @tuples = []
     @callbacks = []
     @__defineGetter__ 'size', ->
       return @tuples.length
 
-  write: (tuple, options={expire: Tuple.DEFAULT.expire})->
+  write: (tuple, options={expire: Tuple.DEFAULT.expire}) ->
     return if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
     tuple.expire = options.expire
@@ -17,7 +17,7 @@ module.exports = class TupleSpace
       c = @callbacks[i]
       if c.tuple.match tuple
         called.push i if c.type == 'take' or c.type == 'read'
-        ((c)->
+        ((c) ->
           setImmediate -> c.callback(null, tuple)
         ).call(this, c)
         if c.type == 'take'
@@ -30,7 +30,7 @@ module.exports = class TupleSpace
   create_callback_id: ->
     new Date()-Math.random()
 
-  read: (tuple, callback)->
+  read: (tuple, callback) ->
     callback = null unless typeof callback == 'function'
     if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
       if callback
@@ -49,7 +49,7 @@ module.exports = class TupleSpace
       return id
     return
 
-  take: (tuple, callback)->
+  take: (tuple, callback) ->
     callback = null unless typeof callback == 'function'
     if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
       if callback
@@ -69,7 +69,7 @@ module.exports = class TupleSpace
       return id
     return
 
-  watch: (tuple, callback)->
+  watch: (tuple, callback) ->
     return unless typeof callback == 'function'
     if !Tuple.isHash(tuple) and !(tuple instance Tuple)
       setImmediate -> callback('argument_error')
@@ -81,7 +81,7 @@ module.exports = class TupleSpace
       tuple: tuple, id: id}
     return id
 
-  cancel: (id)->
+  cancel: (id) ->
     return unless id?
     for i in [0...@callbacks.length]
       c = @callbacks[i]
