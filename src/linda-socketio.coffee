@@ -16,6 +16,12 @@ class Linda extends events.EventEmitter
       throw new Error "client js load error" if err
       @client_js_code = data
 
+    setInterval =>
+      for name, space of @spaces
+        if space?
+          space.check_expire()
+    , 60*3*1000 # 3min
+
   tuplespace: (name) ->
     return @spaces[name] ||
            @spaces[name] = new TupleSpace(name)
