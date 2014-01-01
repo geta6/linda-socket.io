@@ -68,7 +68,7 @@ describe 'instance of LindaClient', ->
 
     it 'should have method "watch"', ->
       ts = create_client().tuplespace('test')
-      assert.equal typeof ts['write'], 'function'
+      assert.equal typeof ts['watch'], 'function'
 
     it 'should have method "cancel"', ->
       ts = create_client().tuplespace('test')
