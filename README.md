@@ -33,8 +33,9 @@ Shared memory on Node.js server.
 
 
 ### Tuple Operations
-- write( tuple )
+- write( tuple , options )
   - put a Tuple into the TupleSpace
+  - options = {expire : 300}  # => expire after 300 sec
 - take( tuple, callback(err, tuple) )
   - get a matched Tuple from the TupleSpace and delete
 - read( tuple, callback(err, tuple) )
