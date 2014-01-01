@@ -287,7 +287,7 @@ describe 'instance of "TupleSpace"', ->
   describe 'method "check_expire"', ->
 
     it 'should delete expired tuples', (done) ->
-      this.timeout(5000)
+      @timeout(5000)
       ts = new TupleSpace
       ts.write {a:1, b:2}, {expire: 3}
       ts.write {a:1, b:2, c:3}, {expire: 1}

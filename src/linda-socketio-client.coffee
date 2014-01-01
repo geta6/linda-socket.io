@@ -19,8 +19,9 @@ class TupleSpace
     key = JSON.stringify tuple
     return @watch_cids[key] || @watch_cids[key] = @create_callback_id()
 
-  write: (tuple) ->
-    @io.emit '__linda_write', {tuplespace: @name, tuple: tuple}
+  write: (tuple, options={expire: null}) ->
+    data = { tuplespace: @name, tuple: tuple, options: options }
+    @io.emit '__linda_write', data
 
   take: (tuple, callback) ->
     id = @create_callback_id()

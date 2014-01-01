@@ -38,7 +38,7 @@ class Linda extends events.EventEmitter
       cids = {}
 
       socket.on '__linda_write', (data) =>
-        @tuplespace(data.tuplespace).write data.tuple
+        @tuplespace(data.tuplespace).write data.tuple, data.options
         @.emit 'write', data
 
       socket.on '__linda_take', (data) =>

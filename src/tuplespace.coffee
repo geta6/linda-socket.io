@@ -10,7 +10,11 @@ module.exports = class TupleSpace
   write: (tuple, options={expire: Tuple.DEFAULT.expire}) ->
     return if !Tuple.isHash(tuple) and !(tuple instanceof Tuple)
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
-    tuple.expire = options.expire
+    tuple.expire =
+      if typeof options.expire == 'number' and options.expire > 0
+        options.expire
+      else
+        Tuple.DEFAULT.expire
     called = []
     taked = false
     for i in [0...@callbacks.length]

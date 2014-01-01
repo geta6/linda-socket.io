@@ -89,6 +89,22 @@ describe 'instance of LindaClient', ->
           assert.equal server.linda.tuplespace('write').size, 1
           done()
 
+      it 'should have "expire" option', (done) ->
+        @timeout(5000)
+        linda = create_client()
+        ts = linda.tuplespace('write_expire')
+        server_ts = server.linda.tuplespace('write_expire')
+
+        ts.write {foo: "bar"}, {expire: 2}
+        ts.read {foo: "bar"}, (err, tuple) ->
+          assert.deepEqual tuple.data, {foo: "bar"}
+          assert.equal server_ts.size, 1
+          setTimeout ->
+            server_ts.check_expire()
+            assert.equal server_ts.size, 0
+            done()
+          , 3000
+
 
     describe 'method "watch"', ->
 
