@@ -13,7 +13,7 @@ class TupleSpace
     @watch_cids = {}
 
   create_callback_id: ->
-    return new Date()-Math.random()
+    return Date.now() - Math.random()
 
   create_watch_callback_id: (tuple) ->
     key = JSON.stringify tuple
@@ -50,5 +50,5 @@ class TupleSpace
 
 if window?
   window.Linda = LindaClient
-else if module? and module.exports?
+else if module?.exports?
   module.exports = LindaClient

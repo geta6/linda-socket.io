@@ -1,14 +1,14 @@
 http = require 'http'
 url  = require 'url'
 fs = require 'fs'
-events = require 'events'
+events = require 'eventemitter2'
 socketio = require 'socket.io'
 
 TupleSpace = module.exports.TupleSpace = require __dirname+'/tuplespace'
 Tuple = module.exports.Tuple = require __dirname+'/tuple'
 module.exports.Client = require __dirname+'/linda-socketio-client'
 
-class Linda extends events.EventEmitter
+class Linda extends events.EventEmitter2
   constructor: ->
     @spaces = {}
 
