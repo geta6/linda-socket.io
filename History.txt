@@ -1,3 +1,9 @@
+=== 0.0.9 2014-1-6
+
+* performance improvement
+  * use EventEmitter2
+  * thank you for contributing @geta6
+
 === 0.0.8 2014-1-6
 
 * bugfix for express framework
