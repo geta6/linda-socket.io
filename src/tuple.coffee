@@ -8,7 +8,7 @@ module.exports = class Tuple
 
   constructor: (@data) ->
     @__defineSetter__ 'expire', (sec) ->
-      @expire_at = Math.floor(new Date()/1000)+sec
+      @expire_at = Math.floor(Date.now()/1000)+sec
     @expire = 300
 
   match: (tuple) ->
