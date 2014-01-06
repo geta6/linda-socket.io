@@ -32,7 +32,7 @@ module.exports = class TupleSpace
     @tuples.push tuple unless taked
 
   create_callback_id: ->
-    new Date()-Math.random()
+    return Date.now() - Math.random()
 
   read: (tuple, callback) ->
     callback = null unless typeof callback == 'function'
@@ -97,7 +97,7 @@ module.exports = class TupleSpace
   check_expire: ->
     expires = []
     for i in [0...@tuples.length]
-      if @tuples[i].expire_at < new Date()/1000
+      if @tuples[i].expire_at < Date.now() / 1000
         expires.push i
     for i in expires by -1
       @tuples.splice i, 1

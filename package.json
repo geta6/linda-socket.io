@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "socket.io": "*",
-    "socket.io-client": "*"
+    "socket.io-client": "*",
+    "eventemitter2": "~0.4.13"
   }
 }
