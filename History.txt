@@ -1,3 +1,7 @@
+=== 0.0.8 2014-1-6
+
+* bugfix for express framework
+
 === 0.0.7 2014-1-1
 
 * add 2nd argument to TupleSpace.write(tuple, options)  #13
