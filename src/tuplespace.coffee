@@ -1,4 +1,5 @@
-Tuple = require __dirname+'/tuple'
+path = require 'path'
+Tuple = require path.resolve 'lib', 'tuple'
 
 module.exports = class TupleSpace
   constructor: (@name='noname') ->
@@ -21,9 +22,8 @@ module.exports = class TupleSpace
       c = @callbacks[i]
       if c.tuple.match tuple
         called.push i if c.type == 'take' or c.type == 'read'
-        ((c) ->
+        do (c) ->
           setImmediate -> c.callback(null, tuple)
-        ).call(this, c)
         if c.type == 'take'
           taked = true
           break
@@ -80,9 +80,11 @@ module.exports = class TupleSpace
       return
     tuple = new Tuple(tuple) unless tuple instanceof Tuple
     id = @create_callback_id()
-    @callbacks.unshift {
-      type: 'watch', callback: callback,
-      tuple: tuple, id: id}
+    @callbacks.unshift
+      id: id
+      type: 'watch'
+      tuple: tuple
+      callback: callback
     return id
 
   cancel: (id) ->
