@@ -34,11 +34,16 @@ class Linda extends events.EventEmitter
     @io = opts.io
     @server = opts.server
 
-    @server.on 'request', (req, res) =>
+    @oldListeners = @server.listeners('request').splice(0)
+    @server.removeAllListeners 'request'
+    @server.on 'request', (req, res) =>  ## intercept requests
       _url = url.parse(decodeURI(req.url), true)
       if _url.pathname == "/linda/linda-socket.io.js"
         res.writeHead 200
         res.end @client_js_code
+        return
+      for listener in @oldListeners
+        listener.call(@server, req, res)
 
     @io.sockets.on 'connection', (socket) =>
       cids = {}
